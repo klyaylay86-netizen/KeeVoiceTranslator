@@ -1,0 +1,16 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.kee.voicetranslator'
+    compileSdk 36
+
+    defaultConfig {
+        applicationId "com.kee.voicetranslator"
+        minSdk 26
+        targetSdk 36
+        versionCode 1
+        versionName "1.0"
+    }
+}
