@@ -140,8 +140,8 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
     }
 
     private void translate(String text) {
-        text = text.trim();
-        if (text.isEmpty()) return;
+        final String queryText = text.trim();
+        if (queryText.isEmpty()) return;
         final String key = getPreferences(MODE_PRIVATE).getString("api_key","").trim();
         if (key.isEmpty()) { keyDialog(); return; }
         final int f = fromSpinner.getSelectedItemPosition(), t = toSpinner.getSelectedItemPosition();
@@ -149,7 +149,7 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
         executor.execute(() -> {
             try {
                 String endpoint = "https://translation.googleapis.com/language/translate/v2?key=" + URLEncoder.encode(key,"UTF-8");
-                String body = "q=" + URLEncoder.encode(text,"UTF-8") + "&source=" + codes[f] + "&target=" + codes[t] + "&format=text";
+                String body = "q=" + URLEncoder.encode(queryText,"UTF-8") + "&source=" + codes[f] + "&target=" + codes[t] + "&format=text";
                 HttpURLConnection c = (HttpURLConnection)new URL(endpoint).openConnection();
                 c.setRequestMethod("POST"); c.setDoOutput(true); c.setConnectTimeout(15000); c.setReadTimeout(20000);
                 c.setRequestProperty("Content-Type","application/x-www-form-urlencoded; charset=UTF-8");
