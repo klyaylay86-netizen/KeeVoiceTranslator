@@ -1,0 +1,14 @@
+{
+  "name": "Kee Voice Translator",
+  "short_name": "Kee Translator",
+  "description": "Myanmar, Thai, Chinese and English voice translator",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0b1110",
+  "theme_color": "#0f766e",
+  "lang": "my",
+  "icons": [
+    {"src":"./icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}
+  ]
+}

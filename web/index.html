@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="my">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#0f766e" />
+  <meta name="description" content="Kee Voice Translator — Myanmar, Thai, Chinese and English voice translator" />
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <link rel="icon" href="./icon.svg" type="image/svg+xml" />
+  <title>Kee Voice Translator</title>
+  <style>
+    :root{color-scheme:dark;--bg:#0b1110;--card:#14201e;--card2:#182825;--line:#29403b;--text:#eef7f4;--muted:#a9bbb6;--accent:#5ee0c0;--accent2:#0f766e;--danger:#ff857a}
+    *{box-sizing:border-box} body{margin:0;background:linear-gradient(180deg,#07100e,#0b1110 45%);color:var(--text);font-family:system-ui,-apple-system,"Noto Sans Myanmar",sans-serif;min-height:100vh}
+    .app{max-width:760px;margin:auto;padding:18px 14px 34px}.top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}.brand h1{font-size:25px;margin:0}.brand p{margin:4px 0 0;color:var(--muted);font-size:14px}.pill{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:999px;padding:10px 14px;font-weight:700}
+    .card{background:rgba(20,32,30,.94);border:1px solid var(--line);border-radius:22px;padding:14px;margin-top:12px;box-shadow:0 14px 34px rgba(0,0,0,.22)}
+    .langs{display:grid;grid-template-columns:1fr 58px 1fr;gap:8px;align-items:center}.swap{height:52px;border-radius:16px;border:1px solid var(--line);background:var(--card2);color:var(--accent);font-size:24px}.sel{width:100%;height:52px;border:1px solid var(--line);border-radius:16px;background:var(--card2);color:var(--text);padding:0 12px;font-size:16px;font-weight:700}
+    .side{margin-top:12px}.sideHead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}.sideHead b{font-size:17px}.status{color:var(--muted);font-size:13px}.text{width:100%;min-height:108px;resize:vertical;border:1px solid var(--line);border-radius:18px;background:#0f1917;color:var(--text);font-size:18px;line-height:1.55;padding:13px;outline:none}.text:focus{border-color:var(--accent2)}
+    .actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}.btn{border:0;border-radius:16px;min-height:52px;padding:10px 12px;font-size:15px;font-weight:800}.primary{background:var(--accent);color:#06201a}.secondary{background:var(--card2);color:var(--text);border:1px solid var(--line)}.mic.live{outline:2px solid var(--danger);animation:pulse 1s infinite}@keyframes pulse{50%{transform:scale(.985);opacity:.8}}
+    .middle{display:flex;justify-content:center;margin:10px 0 -2px}.arrow{font-size:22px;color:var(--accent)}
+    details{margin-top:12px;border-top:1px solid var(--line);padding-top:10px}summary{cursor:pointer;color:var(--muted);font-weight:700}.settings{display:grid;gap:9px;margin-top:10px}.input{height:48px;border-radius:14px;border:1px solid var(--line);background:#0f1917;color:var(--text);padding:0 12px;font-size:15px}.hint{font-size:12px;color:var(--muted);line-height:1.5}.notice{font-size:13px;color:var(--muted);line-height:1.5;margin:10px 2px 0}
+    .history{display:grid;gap:8px}.hitem{padding:10px 12px;border-radius:14px;background:#0f1917;border:1px solid var(--line);font-size:14px;line-height:1.45}.hitem small{color:var(--muted)}
+    .installHelp{display:none;margin-top:8px;color:var(--muted);font-size:12px}.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:#eaf8f4;color:#08201a;padding:11px 16px;border-radius:999px;font-weight:800;opacity:0;pointer-events:none;transition:.2s;z-index:10}.toast.show{opacity:1}
+    @media(max-width:520px){.app{padding:12px 10px 26px}.brand h1{font-size:21px}.actions{grid-template-columns:1fr}.text{min-height:96px}}
+  </style>
+</head>
+<body>
+<main class="app">
+  <div class="top">
+    <div class="brand"><h1>🎙 Kee Voice Translator</h1><p>ပြော → ဘာသာပြန် → အသံထွက်</p></div>
+    <button id="installBtn" class="pill" type="button">＋ Home Screen</button>
+  </div>
+
+  <section class="card">
+    <div class="langs">
+      <select id="leftLang" class="sel" aria-label="Left language"></select>
+      <button id="swapBtn" class="swap" type="button" aria-label="Swap languages">⇄</button>
+      <select id="rightLang" class="sel" aria-label="Right language"></select>
+    </div>
+
+    <div class="side">
+      <div class="sideHead"><b>ကျွန်တော် / ဘယ်ဘက်</b><span id="leftStatus" class="status">အသင့်</span></div>
+      <textarea id="leftText" class="text" placeholder="ဒီနေရာမှာ စကားပြောပါ သို့ စာရိုက်ပါ…"></textarea>
+      <div class="actions">
+        <button id="leftMic" class="btn primary mic" type="button">🎙 ကျွန်တော်ပြောမယ်</button>
+        <button id="leftTranslate" class="btn secondary" type="button">ဘာသာပြန် →</button>
+      </div>
+    </div>
+
+    <div class="middle"><span class="arrow">⇅</span></div>
+
+    <div class="side">
+      <div class="sideHead"><b>Customer / ညာဘက်</b><span id="rightStatus" class="status">အသင့်</span></div>
+      <textarea id="rightText" class="text" placeholder="ဘာသာပြန်ရလဒ် / Customer စကား…"></textarea>
+      <div class="actions">
+        <button id="rightMic" class="btn primary mic" type="button">🎙 Customer ပြောမယ်</button>
+        <button id="rightTranslate" class="btn secondary" type="button">← ဘာသာပြန်</button>
+      </div>
+    </div>
+
+    <div class="actions" style="margin-top:12px">
+      <button id="speakLeft" class="btn secondary" type="button">🔊 ဘယ်ဘက်အသံ</button>
+      <button id="speakRight" class="btn secondary" type="button">🔊 ညာဘက်အသံ</button>
+    </div>
+
+    <details>
+      <summary>⚙ Translation Settings</summary>
+      <div class="settings">
+        <label class="hint">အခမဲ့ mode ကို default သုံးထားပါတယ်။ Google Cloud Translation API key ရှိရင် ထည့်နိုင်ပြီး ပိုတည်ငြိမ်ပါတယ်။</label>
+        <input id="apiKey" class="input" type="password" autocomplete="off" placeholder="Google Cloud API key (optional)" />
+        <button id="saveKey" class="btn secondary" type="button">API Key သိမ်းမယ်</button>
+      </div>
+    </details>
+    <p class="notice">Internet လိုပါတယ်။ Voice recognition နဲ့ voice output က Chrome/ဖုန်းရဲ့ language support ပေါ်မူတည်ပါတယ်။ API key ကိုထည့်ထားရင် ဒီ browser ထဲမှာပဲ သိမ်းထားပါတယ်။</p>
+    <div id="installHelp" class="installHelp">Chrome menu (⋮) → <b>Add to Home screen</b> / <b>Install app</b> ကိုနှိပ်နိုင်ပါတယ်။</div>
+  </section>
+
+  <section class="card">
+    <div class="sideHead"><b>Conversation History</b><button id="clearHistory" class="pill" type="button">ရှင်းမယ်</button></div>
+    <div id="history" class="history"><div class="hint">စကားပြောပြီးရင် ဒီမှာ history ပေါ်မယ်။</div></div>
+  </section>
+</main>
+<div id="toast" class="toast"></div>
+<script>
+const LANGS = [
+  {name:'မြန်မာ', tr:'my', speech:'my-MM'},
+  {name:'ไทย', tr:'th', speech:'th-TH'},
+  {name:'中文', tr:'zh-CN', speech:'zh-CN'},
+  {name:'English', tr:'en', speech:'en-US'}
+];
+const $ = id => document.getElementById(id);
+const leftLang=$('leftLang'),rightLang=$('rightLang'),leftText=$('leftText'),rightText=$('rightText');
+let deferredPrompt=null, recognition=null, activeMic=null;
+
+function fillLangs(){
+  LANGS.forEach((l,i)=>{leftLang.add(new Option(l.name,i));rightLang.add(new Option(l.name,i));});
+  leftLang.value='0'; rightLang.value='1';
+}
+function lang(sel){return LANGS[Number(sel.value)]}
+function toast(msg){const t=$('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2400)}
+function setStatus(side,msg){$(side+'Status').textContent=msg}
+function decodeEntities(s){const e=document.createElement('textarea');e.innerHTML=s;return e.value}
+function addHistory(from,to,src,out){
+  const box=$('history'); if(box.querySelector('.hint')) box.innerHTML='';
+  const d=document.createElement('div');d.className='hitem';d.innerHTML='<small>'+from+' → '+to+'</small><br><b></b><br><span></span>';
+  d.querySelector('b').textContent=src; d.querySelector('span').textContent=out; box.prepend(d);
+}
+async function freeTranslate(text,src,dst){
+  try{
+    const u='https://api.mymemory.translated.net/get?q='+encodeURIComponent(text)+'&langpair='+encodeURIComponent(src+'|'+dst);
+    const r=await fetch(u); if(!r.ok) throw new Error('Free translator '+r.status); const j=await r.json();
+    if(j?.responseData?.translatedText) return decodeEntities(j.responseData.translatedText);
+  }catch(e){console.warn('MyMemory failed',e)}
+  const u='https://translate.googleapis.com/translate_a/single?client=gtx&sl='+encodeURIComponent(src)+'&tl='+encodeURIComponent(dst)+'&dt=t&q='+encodeURIComponent(text);
+  const r=await fetch(u); if(!r.ok) throw new Error('Translator '+r.status); const j=await r.json();
+  return (j[0]||[]).map(x=>x[0]||'').join('');
+}
+async function googleTranslate(text,src,dst,key){
+  const body=new URLSearchParams({q:text,source:src,target:dst,format:'text'});
+  const r=await fetch('https://translation.googleapis.com/language/translate/v2?key='+encodeURIComponent(key),{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'},body});
+  const j=await r.json(); if(!r.ok) throw new Error(j?.error?.message||('Google '+r.status));
+  return decodeEntities(j.data.translations[0].translatedText);
+}
+async function translate(direction){
+  const fromSel=direction==='lr'?leftLang:rightLang, toSel=direction==='lr'?rightLang:leftLang;
+  const srcBox=direction==='lr'?leftText:rightText, outBox=direction==='lr'?rightText:leftText;
+  const side=direction==='lr'?'left':'right'; const text=srcBox.value.trim(); if(!text){toast('စာ သို့ စကား အရင်ထည့်ပါ');return}
+  const from=lang(fromSel),to=lang(toSel); if(from.tr===to.tr){outBox.value=text;speak(outBox.value,to.speech);return}
+  setStatus(side,'ဘာသာပြန်နေပါတယ်…');
+  try{
+    const key=localStorage.getItem('kee_google_key')||'';
+    const out=key?await googleTranslate(text,from.tr,to.tr,key):await freeTranslate(text,from.tr,to.tr);
+    outBox.value=out; addHistory(from.name,to.name,text,out); setStatus(side,'ပြီးပါပြီ ✓'); speak(out,to.speech);
+  }catch(e){console.error(e);setStatus(side,'မရသေးပါ');toast('ဘာသာပြန်မရပါ။ Internet/API ကိုစစ်ပါ')}
+}
+function speak(text,locale){
+  if(!text.trim()) return; if(!('speechSynthesis' in window)){toast('ဒီ browser မှာ အသံထွက်မရပါ');return}
+  speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(text);u.lang=locale;u.rate=.95;speechSynthesis.speak(u);
+}
+function startMic(side){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition; if(!SR){toast('Chrome Speech Recognition မရပါ။ စာရိုက်ပြီးသုံးနိုင်ပါတယ်');return}
+  if(recognition){try{recognition.abort()}catch(e){}}
+  recognition=new SR(); activeMic=side; const sel=side==='left'?leftLang:rightLang; const box=side==='left'?leftText:rightText; const btn=$(side+'Mic');
+  recognition.lang=lang(sel).speech; recognition.interimResults=true; recognition.continuous=false;
+  recognition.onstart=()=>{btn.classList.add('live');setStatus(side,'🎙 နားထောင်နေပါတယ်…')};
+  recognition.onresult=e=>{let final='',interim='';for(let i=e.resultIndex;i<e.results.length;i++){const s=e.results[i][0].transcript;if(e.results[i].isFinal)final+=s;else interim+=s}box.value=final||interim;if(final)translate(side==='left'?'lr':'rl')};
+  recognition.onerror=e=>{console.warn(e.error);setStatus(side,e.error==='not-allowed'?'Microphone permission လိုပါတယ်':'အသံမဖတ်နိုင်ပါ')};
+  recognition.onend=()=>{btn.classList.remove('live');if($(side+'Status').textContent.includes('နားထောင်'))setStatus(side,'အသင့်')};
+  try{recognition.start()}catch(e){toast('Microphone ကိုပြန်စမ်းပါ')}
+}
+
+$('leftMic').onclick=()=>startMic('left'); $('rightMic').onclick=()=>startMic('right');
+$('leftTranslate').onclick=()=>translate('lr'); $('rightTranslate').onclick=()=>translate('rl');
+$('speakLeft').onclick=()=>speak(leftText.value,lang(leftLang).speech); $('speakRight').onclick=()=>speak(rightText.value,lang(rightLang).speech);
+$('swapBtn').onclick=()=>{const a=leftLang.value;leftLang.value=rightLang.value;rightLang.value=a;const t=leftText.value;leftText.value=rightText.value;rightText.value=t};
+$('saveKey').onclick=()=>{localStorage.setItem('kee_google_key',$('apiKey').value.trim());toast($('apiKey').value.trim()?'API Key သိမ်းပြီးပါပြီ':'အခမဲ့ mode ပြန်သုံးပါမယ်')};
+$('clearHistory').onclick=()=>{$('history').innerHTML='<div class="hint">စကားပြောပြီးရင် ဒီမှာ history ပေါ်မယ်။</div>'};
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;$('installBtn').style.display='block'});
+$('installBtn').onclick=async()=>{if(deferredPrompt){deferredPrompt.prompt();await deferredPrompt.userChoice;deferredPrompt=null}else{$('installHelp').style.display='block';toast('Chrome menu → Add to Home screen')}};
+window.addEventListener('appinstalled',()=>toast('Home Screen မှာ ထည့်ပြီးပါပြီ'));
+if('serviceWorker' in navigator) window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(console.warn));
+fillLangs(); $('apiKey').value=localStorage.getItem('kee_google_key')||'';
+</script>
+</body>
+</html>
